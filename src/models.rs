@@ -4,9 +4,9 @@ use serde::{Deserialize, Serialize};
 pub struct MemberData {
     pub member_name: String,
     pub mobile_no: String,
-    pub alternate_mobile_no: String,
-    pub national_id_no: u32,
-    pub physical_address: String,
+    pub alternate_mobile_no: Option<String>,
+    pub national_id_no: Option<u32>,
+    pub physical_address: Option<String>,
     pub period_type: u32,
     pub start_date: String,
     pub stop_date: String,
@@ -17,29 +17,29 @@ pub struct AttendanceData {
     pub member_id: u64,
     pub member_name: String,
     pub attendance_date: String,
-    pub training_completed: bool,
+    pub training_completed: Option<bool>,
 }
 
 #[derive(Deserialize)]
 pub struct InvoiceData {
-    pub is_event: bool,
-    pub event_id: u64,
+    pub is_event: Option<bool>,
+    pub event_id: Option<u64>,
     pub member_id: u64,
     pub member_name: String,
     pub invoice_amount: u32,
     pub invoice_description: String,
     pub period_name: String,
     pub no_of_days: u32,
-    pub amount_paid: u32,
-    pub payment_completed: bool,
+    pub amount_paid: Option<u32>,
+    pub payment_completed: Option<bool>,
     pub start_date: String,
     pub stop_date: String,
 }
 
 #[derive(Deserialize)]
 pub struct PaymentData {
-    pub is_event: bool,
-    pub event_id: u64,
+    pub is_event: Option<bool>,
+    pub event_id: Option<u64>,
     pub member_id: u64,
     pub member_name: String,
     pub invoice_id: u64,
@@ -47,7 +47,7 @@ pub struct PaymentData {
     pub period_name: String,
     pub no_of_days: u32,
     pub amount_paid: u32,
-    pub payment_completed: bool,
+    pub payment_completed: Option<bool>,
     pub start_date: String,
     pub stop_date: String,
 }

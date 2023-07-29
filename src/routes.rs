@@ -32,11 +32,13 @@ pub(crate) async fn add_member(
     member_data: web::Json<MemberData>,
     data: web::Data<Pool>,
 ) -> impl Responder {
+    let k = String::from(""); //Default value.
+    let m: u32 = 0; //Default value.
     let member_name = &member_data.member_name;
     let mobile_no = &member_data.mobile_no;
-    let alternate_mobile_no = &member_data.alternate_mobile_no;
-    let national_id_no = &member_data.national_id_no;
-    let physical_address = &member_data.physical_address;
+    let alternate_mobile_no = &member_data.alternate_mobile_no.as_ref().unwrap_or(&k);
+    let national_id_no = &member_data.national_id_no.as_ref().unwrap_or(&m);
+    let physical_address = &member_data.physical_address.as_ref().unwrap_or(&k);
     let period_type = &member_data.period_type;
     let start_date = &member_data.start_date;
     let stop_date = &member_data.stop_date;
@@ -46,7 +48,7 @@ pub(crate) async fn add_member(
         member_name.to_string(),
         mobile_no.to_string(),
         alternate_mobile_no.to_string(),
-        *national_id_no,
+        **national_id_no,
         physical_address.to_string(),
         *period_type,
         start_date.to_string(),
@@ -61,17 +63,18 @@ pub(crate) async fn add_attendance(
     attendance_data: web::Json<AttendanceData>,
     data: web::Data<Pool>,
 ) -> impl Responder {
+    let k = true; //Default value.
     let member_id = &attendance_data.member_id;
     let member_name = &attendance_data.member_name;
     let attendance_date = &attendance_data.attendance_date;
-    let training_completed = &attendance_data.training_completed;
+    let training_completed = &attendance_data.training_completed.as_ref().unwrap_or(&k);
 
     let response_data = create_attendance(
         &data,
         *member_id,
         member_name.to_string(),
         attendance_date.to_string(),
-        *training_completed,
+        **training_completed,
     );
 
     web::Json(response_data)
@@ -82,31 +85,34 @@ pub(crate) async fn add_invoice(
     invoice_data: web::Json<InvoiceData>,
     data: web::Data<Pool>,
 ) -> impl Responder {
-    let is_event = &invoice_data.is_event;
-    let event_id = &invoice_data.event_id;
+    let k: u64 = 0; //Default value.
+    let m: u32 = 0; //Default value.
+    let n = false; //Default value.
+    let is_event = &invoice_data.is_event.as_ref().unwrap_or(&n);
+    let event_id = &invoice_data.event_id.as_ref().unwrap_or(&k);
     let member_id = &invoice_data.member_id;
     let member_name = &invoice_data.member_name;
     let invoice_amount = &invoice_data.invoice_amount;
     let invoice_description = &invoice_data.invoice_description;
     let period_name = &invoice_data.period_name;
     let no_of_days = &invoice_data.no_of_days;
-    let amount_paid = &invoice_data.amount_paid;
-    let payment_completed = &invoice_data.payment_completed;
+    let amount_paid = &invoice_data.amount_paid.as_ref().unwrap_or(&m);
+    let payment_completed = &invoice_data.payment_completed.as_ref().unwrap_or(&n);
     let start_date = &invoice_data.start_date;
     let stop_date = &invoice_data.stop_date;
 
     let response_data = create_invoice(
         &data,
-        *is_event,
-        *event_id,
+        **is_event,
+        **event_id,
         *member_id,
         member_name.to_string(),
         *invoice_amount,
         invoice_description.to_string(),
         period_name.to_string(),
         *no_of_days,
-        *amount_paid,
-        *payment_completed,
+        **amount_paid,
+        **payment_completed,
         start_date.to_string(),
         stop_date.to_string(),
     );
@@ -119,8 +125,10 @@ pub(crate) async fn add_payment(
     payment_data: web::Json<PaymentData>,
     data: web::Data<Pool>,
 ) -> impl Responder {
-    let is_event = &payment_data.is_event;
-    let event_id = &payment_data.event_id;
+    let k: u64 = 0; //Default value.
+    let m = false; //Default value.
+    let is_event = &payment_data.is_event.as_ref().unwrap_or(&m);
+    let event_id = &payment_data.event_id.as_ref().unwrap_or(&k);
     let member_id = &payment_data.member_id;
     let member_name = &payment_data.member_name;
     let invoice_id = &payment_data.invoice_id;
@@ -128,14 +136,21 @@ pub(crate) async fn add_payment(
     let period_name = &payment_data.period_name;
     let no_of_days = &payment_data.no_of_days;
     let amount_paid = &payment_data.amount_paid;
-    let payment_completed = &payment_data.payment_completed;
+    //let payment_completed = &payment_data.payment_completed.as_ref().unwrap_or(&m);
     let start_date = &payment_data.start_date;
     let stop_date = &payment_data.stop_date;
 
+    let payment_completed =
+        if *invoice_amount > 0 && *amount_paid > 0 && *invoice_amount == *amount_paid {
+            true
+        } else {
+            false
+        };
+
     let response_data = create_payment(
         &data,
-        *is_event,
-        *event_id,
+        **is_event,
+        **event_id,
         *member_id,
         member_name.to_string(),
         *invoice_id,
@@ -143,7 +158,7 @@ pub(crate) async fn add_payment(
         period_name.to_string(),
         *no_of_days,
         *amount_paid,
-        *payment_completed,
+        payment_completed,
         start_date.to_string(),
         stop_date.to_string(),
     );

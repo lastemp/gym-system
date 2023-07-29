@@ -1,0 +1,8 @@
+CREATE TABLE `period_details` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `period_name` VARCHAR(200) DEFAULT '',
+    `no_of_days` INT DEFAULT 0,
+    `duplicate_entry` TINYINT(1) DEFAULT 0,
+    `date_added` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8MB4;
